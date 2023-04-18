@@ -6,7 +6,7 @@ include "Viaje.php";
  */
 function mostrarMenuPrincipal()
 {
-    echo "------------Menu-------------:
+    echo "\n------------Menu-------------:
         1) Cargar informacion del viaje.
         2) Modificar datos del viaje.
         3) Ver datos del viaje.
@@ -52,13 +52,13 @@ function modificaciones($viaje)
                 break;
             case 4: //Cambiar informacion de pasajeros
                 echo "    1) Cambiar todos los pasajeros.
-                2)Cambiar la informacion de un pasajero segun su documento.
+                2) Cambiar la informacion de un pasajero segun su documento.
                 Elija una opcion: ";
                 $rta = trim(fgets(STDIN));
-                if($rta==1){//Modifica todo el array de pasajeros
+                if ($rta == 1) { //Modifica todo el array de pasajeros
                     $nuevoArrayPasajeros = cargarPasajeros($viaje->getCantMaxPasajeros());
                     $viaje->setPasajeros($nuevoArrayPasajeros);
-                } elseif ($rta == 2){ //Modifica un pasajero especifico
+                } elseif ($rta == 2) { //Modifica un pasajero especifico
                     modificarUnPasajero($viaje);
                 } else {
                     echo "Opcion incorrecta.\n";
@@ -78,10 +78,25 @@ function modificaciones($viaje)
  * @param int $cantMax
  * @return array
  */
+
+
+$arrayPasajerosPrueba = [
+    new Pasajero("Graciela", "Mendez", 42969186, 52453541),
+    new Pasajero("Ester", "Cross", 22349753, 80123483),
+    new Pasajero("Maria", "Fill", 31794186, 982344433),
+    new Pasajero("Simon", "Gartel", 49148531, 143356774),
+    new Pasajero("Roberto", "Pautemon", 20486153, 114156764),
+    new Pasajero("Walter", "Casemiro", 46750275, 114451312),
+];
+
+$responsablePrueba =  new ResponsableV(1110, 88837, 'Carlos', 'Timba');
+
+/**
+ * Funcion que carga los pasajeros
+ */
 function cargarPasajeros($cantMax)
 {
     $i = 0;
-    $array = [];
     $seguir = true;
     do {
         echo "Ingrese los datos de los pasajeros:\n";
@@ -91,12 +106,11 @@ function cargarPasajeros($cantMax)
         $apellido = trim(fgets(STDIN));
         echo "Documento: ";
         $doc = trim(fgets(STDIN));
-        $array[$i] = [
-            "nombre" => $nombre,
-            "apellido" => $apellido,
-            "documento" => $doc
-        ];
+        echo 'Numero de Telefono: ';
+        $tel = trim(fgets(STDIN));
+        $array[$i] = new Pasajero($nombre, $apellido, $doc, $tel);
         $i++;
+
         echo "Desea insertar otro pasajero? (s/n): ";
         $rta = trim(fgets(STDIN));
         if ($rta == "n") {
@@ -110,61 +124,71 @@ function cargarPasajeros($cantMax)
     return $array;
 }
 
-$arrayPasajerosPrueba = [
-    ["nombre" => "Graciela", "apellido" => "Mendez", "documento" => 42969186],
-    ["nombre" => "Ester", "apellido" => "Cross", "documento" => 22349753],
-    ["nombre" => "Maria", "apellido" => "Fill", "documento" => 31794186],
-    ["nombre" => "Simon", "apellido" => "Gartel", "documento" => 49148531],
-    ["nombre" => "Roberto", "apellido" => "Pautemon", "documento" => 20486153],
-    ["nombre" => "Walter", "apellido" => "Casemiro", "documento" => 46750275]
-];
+function cargarResponsable()
+{
+    echo 'Ingrese los datos del responsable del viaje: ';
+    echo "Nombre: ";
+    $nombre = trim(fgets(STDIN));
+    echo "Apellido: ";
+    $apellido = trim(fgets(STDIN));
+    echo "Numero de empleado : ";
+    $empleado = trim(fgets(STDIN));
+    echo 'Numero de Licencia: ';
+    $lic = trim(fgets(STDIN));
 
-
-    /**
-     * Funcion que pide el documento de un pasajero a modificar, en caso de que exista en el array se ofrecen opciones para cambiar sus datos,
-     * se pide el nuevo valor a asignar y se actualiza el dato, en caso de que no exista se muestra un mensaje de error.
-     */
-     function modificarUnPasajero($viaje)
-    {
-        echo "Ingrese el documento del pasajero que desea modificar: ";
-        $doc = trim(fgets(STDIN));
-        $posPasajero = $viaje -> buscarPasajeroPorDocumento($doc);
-        if ($posPasajero == -1) {
-            echo "No se ha encontrado un pasajero con el documento n°: " . $doc . ".\n";
-        } else {
-            do {
-                echo "Dato a modificar: 
+    return new ResponsableV($nombre, $apellido, $empleado, $lic);
+}
+/**
+ * Funcion que pide el documento de un pasajero a modificar, en caso de que exista en el array se ofrecen opciones para cambiar sus datos,
+ * se pide el nuevo valor a asignar y se actualiza el dato, en caso de que no exista se muestra un mensaje de error.
+ */
+function modificarUnPasajero($viaje)
+{
+    echo "Ingrese el documento del pasajero que desea modificar: ";
+    $doc = trim(fgets(STDIN));
+    $posPasajero = $viaje->buscarPasajeroPorDocumento($doc);
+    if ($posPasajero == -1) {
+        echo "No se ha encontrado un pasajero con el documento n°: " . $doc . ".\n";
+    } else {
+        do {
+            echo "Dato a modificar: 
                     1) Nombre.
                     2) Apellido. 
                     3) Documento.
+                    4) Telefono.
                     0) Volver atras.
                 Elija una opcion: ";
-                $opcion = trim(fgets(STDIN));
-                switch ($opcion) {
-                    case 1:
-                        echo "Ingrese el nuevo nombre: ";
-                        $nuevoNombre = trim(fgets(STDIN));
-                        $viaje -> getPasajeros()[$posPasajero]["nombre"] = $nuevoNombre;                       
-                        break;
-                    case 2:
-                        echo "Ingrese el nuevo apellido: ";
-                        $nuevoApellido = trim(fgets(STDIN));
-                        $viaje -> getPasajeros()[$posPasajero]["apellido"] = $nuevoApellido;
-                        break;
-                    case 3:
-                        echo "Ingrese el nuevo documento: ";
-                        $nuevoDoc = trim(fgets(STDIN));
-                        $viaje -> getPasajeros()[$posPasajero]["documento"] = $nuevoDoc;
-                        break;
-                    case 0:
-                        break;
-                    default:
-                        echo "Opcion incorrecta.\n";
-                }
-            } while ($opcion != 0);
-        }
-    }
+            $opcion = trim(fgets(STDIN));
+            switch ($opcion) {
+                case 1:
+                    echo "Ingrese el nuevo nombre: ";
+                    $nuevoNombre = trim(fgets(STDIN));
+                    $viaje->getPasajeros()[$posPasajero]->setNombre($nuevoNombre);
+                    break;
+                case 2:
+                    echo "Ingrese el nuevo apellido: ";
+                    $nuevoApellido = trim(fgets(STDIN));
+                    $viaje->getPasajeros()[$posPasajero]->setApellido($nuevoApellido);
+                    break;
+                case 3:
+                    echo "Ingrese el nuevo documento: ";
+                    $nuevoDoc = trim(fgets(STDIN));
+                    $viaje->getPasajeros()[$posPasajero]->setNumeroDocumento($nuevoDoc);
+                    break;
 
+                case 4:
+                    echo 'Ingrese el nuevo telefono: ';
+                    $nuevoTel = trim(fgets(STDIN));
+                    $viaje->getPasajeros()[$posPasajero]->setTelefono($nuevoTel);
+                    break;
+                case 0:
+                    break;
+                default:
+                    echo "Opcion incorrecta.\n";
+            }
+        } while ($opcion != 0);
+    }
+}
 do {
 
     mostrarMenuPrincipal();
@@ -179,25 +203,26 @@ do {
             echo "Ingrese la cantidad maxima de pasajeros: ";
             $cantMax = trim(fgets(STDIN));
             $pasajeros = cargarPasajeros($cantMax);
-            $viaje = new Viaje($codigo, $destino, $cantMax, $pasajeros);
+            $resp = cargarResponsable();
+            $viaje = new Viaje($codigo, $destino, $cantMax, $pasajeros, $resp);
             break;
         case 2: //Modificar datos
-            if(isset($viaje)){
+            if (isset($viaje)) {
                 modificaciones($viaje);
             } else {
                 echo "Todavia no se han cargado datos al viaje.\n";
             }
-            
+
             break;
         case 3:
-            if(isset($viaje)){
+            if (isset($viaje)) {
                 echo $viaje;
             } else {
                 echo "Todavia no se han cargado datos al viaje.\n";
             }
             break;
         case 4:
-            $viaje = new Viaje(1, "Cordoba", 10, $arrayPasajerosPrueba);
+            $viaje = new Viaje(76851, "Cordoba", 10, $arrayPasajerosPrueba, $responsablePrueba);
             echo "Datos de prueba cargados.\n";
             break;
         case 0:

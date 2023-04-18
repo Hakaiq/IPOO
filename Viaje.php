@@ -1,4 +1,6 @@
 <?php
+include 'Pasajero.php';
+include 'ResponsableV.php';
 
 class Viaje
 {
@@ -6,14 +8,16 @@ class Viaje
     private $destino;
     private $cantMaximaPasajeros;
     private $pasajeros;
+    private $responsable;
 
     //Metodo constructor
-    public function __construct($codigo, $destino, $cantMax, $pasajeros)
+    public function __construct($codigo, $destino, $cantMax, $pasajeros, $responsable)
     {
         $this->codigo = $codigo;
         $this->destino = $destino;
         $this->cantMaximaPasajeros = $cantMax;
         $this->pasajeros = $pasajeros;
+        $this->responsable = $responsable;
     }
 
     //Metodos de acceso
@@ -50,6 +54,16 @@ class Viaje
     {
         $this->pasajeros = $valor;
     }
+    public function getResponsable()
+    {
+        return $this->responsable;
+    }
+    public function setResponsable($responsable)
+    {
+        $this->responsable = $responsable;
+
+        return $this;
+    }
 
     /**
      * Funcion que dado un dni busca el pasajero cuyo dni coincida y retorna la posicion del array de pasajeros donde se encuentra.
@@ -63,7 +77,7 @@ class Viaje
         $largoArreglo = sizeOf($this->getPasajeros());
         $encontrado = false;
         while ($pos < $largoArreglo && !$encontrado) {
-            if ($this->getPasajeros()[$pos]["documento"] == $docPasajero) {
+            if ($this->getPasajeros()[$pos]->getNumeroDocumento() == $docPasajero) {
                 $encontrado = true;
             } else {
                 $pos++;
@@ -82,7 +96,7 @@ class Viaje
      */
     public function __toString()
     {
-        $cadena = "Codigo: " . $this->getCodigo() .
+        $cadena = "\nCodigo: " . $this->getCodigo() .
             "\nDestino: " . $this->getDestino() .
             "\nCantidad maxima de pasajeros: " . $this->getCantMaxPasajeros() .
             "\nPasajeros:";
@@ -90,10 +104,12 @@ class Viaje
             $cadena = $cadena . "No hay pasajeros.\n";
         } else {
             foreach ($this->getPasajeros() as $pasajero) {
-                $infoPasajero = "Nombre: " . $pasajero["nombre"] . ". Apellido: " . $pasajero["apellido"] . ". Nro Documento: " . $pasajero["documento"] . "\n";
+               $infoPasajero = $pasajero ->  __toString();
                 $cadena = $cadena . $infoPasajero;
             }
         }
+        $infoResponsable = $this-> getResponsable()-> __toString();
+        $cadena = $cadena . $infoResponsable;
         return $cadena;
     }
 }
